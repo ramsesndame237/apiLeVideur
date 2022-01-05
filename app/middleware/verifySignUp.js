@@ -21,14 +21,27 @@ checkDuplicateEmailOrPhoneNumber = (req, res, next) => {
             phoneNumber: req.body.phoneNumber
         }
     }).then((user)=>{
-
-
         if(user){
             res.status(400).send({
                 message:"Failed, this phone number is already in use!"
             })
-
+            return; 
         }
-        return;
     })
+
+    // email 
+
+    USER.findOne({
+        where:{
+            email:req.body.email
+        }
+    }).then((user)=>{
+        if (user) {
+            res.status(400).send({
+                message:"Failed, this email is already in use!"
+            })
+            return
+        }
+        next();
+    });
 }
