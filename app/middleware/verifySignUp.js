@@ -27,24 +27,25 @@ checkDuplicateEmailOrPhoneNumber = (req, res, next) => {
             })
             return; 
         }
+
+         // email 
+
+        USER.findOne({
+            where:{
+                email:req.body.email
+            }
+        }).then((user)=>{
+            if (user) {
+                res.status(400).send({
+                    message:"Failed, this email is already in use!"
+                })
+                return
+            }
+            next();
+        });
     })
-
-    // email 
-
-    USER.findOne({
-        where:{
-            email:req.body.email
-        }
-    }).then((user)=>{
-        if (user) {
-            res.status(400).send({
-                message:"Failed, this email is already in use!"
-            })
-            return
-        }
-        next();
-    });
 }
+
 /**
  * verfication de l'existance du role
  */
@@ -62,3 +63,10 @@ checkRolesExisted = (req, res, next) => {
     
     next();
   };
+
+  const verifySignUp = {
+    checkDuplicateEmailOrPhoneNumber: checkDuplicateEmailOrPhoneNumber,
+    checkRolesExisted: checkRolesExisted
+  };
+  
+  module.exports = verifySignUp;
